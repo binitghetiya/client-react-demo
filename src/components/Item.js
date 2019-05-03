@@ -1,5 +1,4 @@
 import React from "react";
-import data from "./response";
 import { FaPlus, FaMinus, FaCheck, FaTimes } from "react-icons/fa";
 import SubItem from "./SubItem";
 

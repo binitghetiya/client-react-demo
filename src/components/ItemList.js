@@ -1,5 +1,5 @@
 import React from "react";
-import data from "./response";
+import data from "./../response";
 import Item from "./Item";
 
 export default class ItemList extends React.Component {

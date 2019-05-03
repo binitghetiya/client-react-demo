@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.scss';
-import ItemList from './ItemList';
+import ItemList from './components/ItemList';
 
 function App() {
   return (
