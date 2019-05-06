@@ -1,42 +1,97 @@
 import React from "react";
-import data from "./../response";
+import data from "../response";
 import Item from "./Item";
 
-export default class ItemList extends React.Component {
+export default class Item1 extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mains: data.layers.filter(i => i.parentLayerId === -1),
-      selectedItems: []
+      mains: data.layers,
+      selectedItems: [],
+      currentlyOpened: [-1] // -1 will always be there becuase it's root and we want to see all root items
     };
   }
 
-  changeSelectedItems = itemId => {
+  handleChangeCurrentlyOpened = itemId => {
+    const { currentlyOpened } = this.state;
+    const index = currentlyOpened.includes(itemId);
+    if (!index) {
+      currentlyOpened.push(itemId);
+    } else {
+      const index = currentlyOpened.indexOf(itemId);
+      if (index !== -1) currentlyOpened.splice(index, 1);
+    }
+    this.setState({ currentlyOpened });
+  };
+
+  handleChangeSelectedItems = itemId => {
     const { selectedItems } = this.state;
     const index = selectedItems.includes(itemId);
-    if(!index) {
+    if (!index) {
       selectedItems.push(itemId);
     } else {
       const index = selectedItems.indexOf(itemId);
       if (index !== -1) selectedItems.splice(index, 1);
     }
-    this.setState({selectedItems});
+    this.setState({ selectedItems });
+  };
+
+  renderSingleView = main => {
+    const { currentlyOpened, selectedItems } = this.state;
+    if (!(main.subLayerIds && main.subLayerIds.length)) {
+      return (
+        <Item
+          item={main}
+          key={main.id}
+          isOpen={currentlyOpened.includes(main.id)}
+          isChecked={selectedItems.includes(main.id)}
+          onChangeSelectedItems={() => {
+            this.handleChangeSelectedItems(main.id);
+          }}
+          onChangeCurrentlyOpened={() =>
+            this.handleChangeCurrentlyOpened(main.id)
+          }
+        />
+      );
+    }
+    return (
+      <Item
+        item={main}
+        key={main.id}
+        isOpen={currentlyOpened.includes(main.id)}
+        isChecked={selectedItems.includes(main.id)}
+        onChangeSelectedItems={() => {
+          this.handleChangeSelectedItems(main.id);
+        }}
+        onChangeCurrentlyOpened={() =>
+          this.handleChangeCurrentlyOpened(main.id)
+        }
+      >
+        {this.getRenderedViewForItems(main.id)}
+      </Item>
+    );
+  };
+
+  getRenderedViewForItems = parentLayerId => {
+    const { currentlyOpened, mains } = this.state;
+    if (!currentlyOpened.includes(parentLayerId)) {
+      return null;
+    }
+
+    const allSiblings = mains.filter(i => i.parentLayerId === parentLayerId);
+    if (!allSiblings.length) {
+      return null;
+    }
+
+    return allSiblings.map(main => this.renderSingleView(main));
   };
 
   render() {
-    const { mains, selectedItems } = this.state;
+    const { selectedItems } = this.state;
     return (
       <div className="item-list">
         <div> Selected Ids [{selectedItems.join(", ")}] </div>
-        {mains.map(main => (
-          <Item
-            data={data.layers}
-            root={main}
-            key={main.id}
-            selectedItems={selectedItems}
-            changeSelectedItems={this.changeSelectedItems}
-          />
-        ))}
+        {this.getRenderedViewForItems(-1, 0)}
       </div>
     );
   }
