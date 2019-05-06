@@ -1,12 +1,7 @@
 import React from "react";
 import { FaPlus, FaMinus, FaCheck, FaTimes } from "react-icons/fa";
 
-export default class Item extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
+export default class Item extends React.PureComponent {
   render() {
     const { isOpen } = this.props;
     const {
