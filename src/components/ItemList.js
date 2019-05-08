@@ -2,7 +2,7 @@ import React from "react";
 import data from "../response";
 import Item from "./Item";
 
-export default class Item1 extends React.Component {
+export default class ItemList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,36 +38,18 @@ export default class Item1 extends React.Component {
 
   renderSingleView = main => {
     const { currentlyOpened, selectedItems } = this.state;
-    if (!(main.subLayerIds && main.subLayerIds.length)) {
-      return (
-        <Item
-          item={main}
-          key={main.id}
-          isOpen={currentlyOpened.includes(main.id)}
-          isChecked={selectedItems.includes(main.id)}
-          onChangeSelectedItems={() => {
-            this.handleChangeSelectedItems(main.id);
-          }}
-          onChangeCurrentlyOpened={() =>
-            this.handleChangeCurrentlyOpened(main.id)
-          }
-        />
-      );
-    }
     return (
       <Item
         item={main}
         key={main.id}
         isOpen={currentlyOpened.includes(main.id)}
         isChecked={selectedItems.includes(main.id)}
-        onChangeSelectedItems={() => {
-          this.handleChangeSelectedItems(main.id);
-        }}
-        onChangeCurrentlyOpened={() =>
-          this.handleChangeCurrentlyOpened(main.id)
-        }
+        onChangeSelectedItems={this.handleChangeSelectedItems}
+        onChangeCurrentlyOpened={this.handleChangeCurrentlyOpened}
       >
-        {this.getRenderedViewForItems(main.id)}
+        {main.subLayerIds && main.subLayerIds.length
+          ? this.getRenderedViewForItems(main.id)
+          : null}
       </Item>
     );
   };
